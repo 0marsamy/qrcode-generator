@@ -207,14 +207,17 @@
         document.getElementById("linkForm").addEventListener("submit", function(event) {
             event.preventDefault();
             
-            var realLink = document.getElementById("linkInput").value;
-            var fakeLink = document.getElementById("linkNameInput").value;
+            var realLink = encodeURIComponent(document.getElementById("linkInput").value);
+            var fakeLink = encodeURIComponent(document.getElementById("linkNameInput").value);
             
             var qrElement = document.getElementById("qrcode");
             qrElement.innerHTML = "";
 
-            // إنشاء QR Code بالرابط الحقيقي
-            QRCode.toDataURL(realLink, { errorCorrectionLevel: 'H' }, function (error, url) {
+            // إنشاء رابط لصفحة الوسيطة مع البيانات
+            var redirectUrl = `redirect.html?fakeLink=${fakeLink}&realLink=${realLink}`;
+
+            // إنشاء QR Code باستخدام رابط الصفحة الوسيطة
+            QRCode.toDataURL(redirectUrl, { errorCorrectionLevel: 'H' }, function (error, url) {
                 if (error) {
                     console.error("Error generating QR Code:", error);
                     return;
@@ -227,25 +230,14 @@
                 qrElement.appendChild(img);
 
                 img.addEventListener("click", function() {
-                    var userConfirmed = confirm("هل تريد الانتقال إلى الصفحة المطلوبة؟");
-                    if (userConfirmed) {
-                        window.open(realLink, "_blank");
-                    }
+                    window.open(redirectUrl, "_blank");
                 });
 
                 // تحديث الرابط الظاهر
                 var qrLink = document.getElementById("qrLink");
-                qrLink.href = realLink;
-                qrLink.textContent = fakeLink;
+                qrLink.href = redirectUrl;
+                qrLink.textContent = decodeURIComponent(fakeLink);
                 qrLink.style.display = "inline-block";
-
-                qrLink.addEventListener("click", function(event) {
-                    event.preventDefault();
-                    var userConfirmed = confirm("هل تريد الانتقال إلى الصفحة المطلوبة؟");
-                    if (userConfirmed) {
-                        window.open(realLink, "_blank");
-                    }
-                });
             });
         });
     </script>
