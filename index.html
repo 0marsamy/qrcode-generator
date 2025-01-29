@@ -196,28 +196,26 @@
         <br><br>
 
         <label for="linkNameInput">الرابط الوهمي:</label>
-        <input type="text" id="linkNameInput" placeholder="اسم الرابط" required>
+        <input type="url" id="linkNameInput" placeholder="أدخل رابط وهمي" required>
         <button type="submit">إنشاء QR Code</button>
     </form>
 
     <div id="qrcode"></div>
-    <a id="qrLink" href="#" target="_blank" style="display:none;">اضغط هنا للانتقال</a>
 
     <script>
         document.getElementById("linkForm").addEventListener("submit", function(event) {
             event.preventDefault();
             
             var realLink = encodeURIComponent(document.getElementById("linkInput").value);
-            var fakeLink = encodeURIComponent(document.getElementById("linkNameInput").value);
+            var fakeLink = encodeURIComponent(document.getElementById("linkNameInput").value); 
 
-            // Get the absolute URL of the redirect.html page
-            var baseUrl = window.location.origin + window.location.pathname.replace(/index\.html$/, '');
-            var redirectUrl = `${baseUrl}redirect.html?fakeLink=${fakeLink}&realLink=${realLink}`;
+            // توليد رابط التحويل بحيث يظهر `fakeLink`
+            var redirectUrl = `${window.location.origin}${window.location.pathname.replace(/index\.html$/, '')}redirect.html?realLink=${realLink}&fakeLink=${fakeLink}`;
 
             var qrElement = document.getElementById("qrcode");
             qrElement.innerHTML = "";
 
-            // Generate QR Code with the full URL
+            // **إنشاء QR Code يحتوي على رابط التحويل ولكن يظهر للمستخدم `fakeLink`**
             QRCode.toDataURL(redirectUrl, { errorCorrectionLevel: 'H' }, function (error, url) {
                 if (error) {
                     console.error("Error generating QR Code:", error);
@@ -229,16 +227,6 @@
                 img.alt = "QR Code";
                 img.style.cursor = "pointer";
                 qrElement.appendChild(img);
-
-                img.addEventListener("click", function() {
-                    window.open(redirectUrl, "_blank");
-                });
-
-                // Update the visible link
-                var qrLink = document.getElementById("qrLink");
-                qrLink.href = redirectUrl;
-                qrLink.textContent = decodeURIComponent(fakeLink);
-                qrLink.style.display = "inline-block";
             });
         });
     </script>

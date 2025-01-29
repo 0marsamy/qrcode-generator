@@ -36,60 +36,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>التحويل</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            direction: rtl;
-            margin: 50px;
-        }
-        #fakeLink {
-            color: blue;
-            text-decoration: underline;
-            cursor: pointer;
-            font-size: 20px;
-            display: inline-block;
-            margin-top: 10px;
-        }
-        .error {
-            color: red;
-            font-size: 18px;
-        }
-    </style>
 </head>
 <body>
 
-    <h2>التحويل إلى الرابط الحقيقي</h2>
-    <p>تم مسح QR Code. اضغط على الرابط الوهمي للمتابعة:</p>
+    <h2 dir="rtl">تم مسح QR Code</h2>
+    <p dir="rtl">اضغط على الرابط للمتابعة:</p>
 
-    <a id="fakeLink" href="#"></a>
-    <p id="errorMessage" class="error" style="display: none;">حدث خطأ: الرابط غير متوفر.</p>
+    <a id="fakeLink" href="#" style="color: blue; text-decoration: underline; cursor: pointer;"></a>
 
     <script>
-        // استخراج القيم من الرابط
+        // استخراج الرابط الأصلي والوهمي من الـ Query Parameters
         var urlParams = new URLSearchParams(window.location.search);
-        var realLink = urlParams.get('realLink');
-        var fakeLink = urlParams.get('fakeLink');
+        var realLink = decodeURIComponent(urlParams.get('realLink'));
+        var fakeLink = decodeURIComponent(urlParams.get('fakeLink'));
 
-        if (realLink && fakeLink) {
-            // فك ترميز الرابط الوهمي وعرضه
-            fakeLink = decodeURIComponent(fakeLink);
-            realLink = decodeURIComponent(realLink);
-            
-            var linkElement = document.getElementById('fakeLink');
-            linkElement.innerText = fakeLink;
-            linkElement.addEventListener('click', function(event) {
-                event.preventDefault();
-                var userConfirmed = confirm("هل ترغب في الانتقال إلى الرابط الفعلي؟");
-                if (userConfirmed) {
-                    window.location.href = realLink;
-                }
-            });
-        } else {
-            // إظهار رسالة خطأ في حال عدم وجود بيانات صحيحة
-            document.getElementById('fakeLink').style.display = "none";
-            document.getElementById('errorMessage').style.display = "block";
-        }
+        // تحديث الرابط ليظهر كأنه `fakeLink` ولكن عند الضغط عليه يذهب إلى `realLink`
+        var fakeLinkElement = document.getElementById('fakeLink');
+        fakeLinkElement.innerText = fakeLink;
+        fakeLinkElement.href = "#";
+
+        fakeLinkElement.addEventListener('click', function(event) {
+            event.preventDefault();
+            var userConfirmed = confirm("هل ترغب في الانتقال إلى الرابط الفعلي؟");
+            if (userConfirmed) {
+                window.location.href = realLink;
+            }
+        });
     </script>
 
 </body>
