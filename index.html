@@ -201,6 +201,8 @@
     </form>
 
     <div id="qrcode"></div>
+    <br>
+    <a id="qrLink" href="#" target="_blank" style="display:none;"></a>
 
     <script>
         document.getElementById("linkForm").addEventListener("submit", function(event) {
@@ -215,7 +217,7 @@
             var qrElement = document.getElementById("qrcode");
             qrElement.innerHTML = "";
 
-            // **إنشاء QR Code يحتوي على رابط التحويل ولكن يظهر للمستخدم `fakeLink`**
+            // **إنشاء QR Code يحتوي على رابط التحويل**
             QRCode.toDataURL(redirectUrl, { errorCorrectionLevel: 'H' }, function (error, url) {
                 if (error) {
                     console.error("Error generating QR Code:", error);
@@ -228,6 +230,12 @@
                 img.style.cursor = "pointer";
                 qrElement.appendChild(img);
             });
+
+            // عرض الرابط أسفل QR Code في الكمبيوتر
+            var qrLinkElement = document.getElementById("qrLink");
+            qrLinkElement.href = redirectUrl;
+            qrLinkElement.innerText = fakeLink;  // إظهار الرابط الوهمي
+            qrLinkElement.style.display = "inline-block";
         });
     </script>
 
