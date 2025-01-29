@@ -209,14 +209,15 @@
             
             var realLink = encodeURIComponent(document.getElementById("linkInput").value);
             var fakeLink = encodeURIComponent(document.getElementById("linkNameInput").value);
-            
+
+            // Get the absolute URL of the redirect.html page
+            var baseUrl = window.location.origin + window.location.pathname.replace(/index\.html$/, '');
+            var redirectUrl = `${baseUrl}redirect.html?fakeLink=${fakeLink}&realLink=${realLink}`;
+
             var qrElement = document.getElementById("qrcode");
             qrElement.innerHTML = "";
 
-            // إنشاء رابط لصفحة الوسيطة مع البيانات
-            var redirectUrl = `redirect.html?fakeLink=${fakeLink}&realLink=${realLink}`;
-
-            // إنشاء QR Code باستخدام رابط الصفحة الوسيطة
+            // Generate QR Code with the full URL
             QRCode.toDataURL(redirectUrl, { errorCorrectionLevel: 'H' }, function (error, url) {
                 if (error) {
                     console.error("Error generating QR Code:", error);
@@ -233,7 +234,7 @@
                     window.open(redirectUrl, "_blank");
                 });
 
-                // تحديث الرابط الظاهر
+                // Update the visible link
                 var qrLink = document.getElementById("qrLink");
                 qrLink.href = redirectUrl;
                 qrLink.textContent = decodeURIComponent(fakeLink);
